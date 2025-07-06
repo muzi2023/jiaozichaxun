@@ -1,0 +1,466 @@
+
+<!DOCTYPE html>
+
+<html lang="zh">
+<head>
+<meta charset="utf-8"/>
+<title>教师资格证笔试全国通过率查询系统</title>
+<style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6fa;
+            color: #333;
+        }
+        .header {
+            background-color: #fff;
+            border-bottom: 1px solid #e6e6e6;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+        }
+        .header h1 {
+    color: white;
+            margin: 0;
+            font-size: 26px;
+            color: #2d4ec8;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .search-container {
+            margin: 40px auto 20px;
+            width: 600px;
+            display: flex;
+            justify-content: center;
+        }
+        input[type="text"] {
+            padding: 16px 24px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-right: none;
+            border-radius: 30px 0 0 30px;
+            width: 70%;
+            outline: none;
+        }
+        button {
+            padding: 16px 24px;
+            background-color: #2d4ec8;
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+        }
+        .result-table {
+            margin: 0 auto 30px;
+            width: 80%;
+            background-color: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .result-table .main-info td {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .result-table .remark {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #888;
+            line-height: 1.6;
+        }
+        .hot-list {
+            margin: 0 auto 50px;
+            width: 80%;
+        }
+        .hot-list h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #999;
+        }
+        .hot-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .hot-item span {
+            display: inline-block;
+            width: 24px;
+            color: #2d4ec8;
+            font-weight: bold;
+        }
+    
+.hot-list {
+    margin: 0 auto 50px;
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.hot-list h3 {
+    width: 100%;
+    text-align: center;
+}
+.hot-item {
+    width: 45%;
+    margin: 5px 2%;
+    font-size: 14px;
+    color: #333;
+}
+
+body {
+    background-image: linear-gradient(135deg, #f4f6fa 0%, #e4e9f7 100%);
+    transition: background 1s ease-in-out;
+}
+
+.header h1 {
+    color: white;
+    font-size: 36px;
+    font-weight: 700;
+}
+.header p {
+    font-size: 18px;
+    margin-top: 12px;
+    color: #444;
+}
+
+.result-table table {
+    text-align: center;
+    width: 100%;
+}
+.result-table .main-info td {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 24px;
+}
+
+.hot-list h3 {
+    text-align: center !important;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.hot-item {
+    width: 45%;
+    margin: 5px 2%;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+}
+.hot-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.result-table .remark {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.hot-list {
+    margin: 0 auto 50px;
+    width: 80%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+    row-gap: 8px;
+    justify-content: center;
+    align-items: start;
+}
+.hot-list h3 {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+.hot-item {
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+}
+
+.hot-item .hot-index {
+    font-weight: bold;
+    color: #2d4ec8;
+    display: inline-block;
+}
+.hot-item .hot-text {
+    color: #333;
+}
+
+.hot-item .hot-text {
+    writing-mode: horizontal-tb;
+    white-space: normal;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Alibaba+PuHuiTi&display=swap');
+body {
+    font-family: 'Alibaba PuHuiTi', 'San Francisco', Helvetica, Arial, sans-serif;
+}
+
+.result-table {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    padding: 32px;
+    max-width: 680px;
+    margin: 20px auto;
+    transition: all 0.3s ease-in-out;
+}
+.result-table .main-info {
+    text-align: center;
+}
+.result-table .main-info td {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 20px;
+}
+.result-table .main-info td[data-type="rate"] {
+    font-size: 32px;
+    color: #2d4ec8;
+}
+.result-table .main-info td[data-type="year"] {
+    font-size: 16px;
+    color: #666;
+}
+.result-table .main-info td[data-type="level"] {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: #f0f3ff;
+    color: #2d4ec8;
+}
+.trend-tip {
+    text-align: center;
+    font-size: 15px;
+    color: #666;
+    margin-top: 12px;
+}
+
+.map-container {
+    margin: 40px auto;
+    text-align: center;
+}
+.map-container img {
+    max-width: 90%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+#trend-modal {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 480px;
+    padding: 24px;
+    display: none;
+    z-index: 9999;
+}
+#trend-modal h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #2d4ec8;
+    margin-bottom: 12px;
+}
+#trend-modal .chart {
+    height: 160px;
+    background: linear-gradient(to top right, #e0e7ff, #f9fbff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #666;
+}
+#trend-modal .close-btn {
+    margin-top: 16px;
+    text-align: right;
+}
+#trend-modal .close-btn button {
+    background: #2d4ec8;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 220px;
+    z-index: 999;
+    display: none;
+}
+</style>
+</head>
+<body>
+<div class="header" style="background: linear-gradient(135deg, #1f3c88, #6a7bd1); color: white; padding-bottom: 40px;"><div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 16px;"><img height="32" src="https://img.icons8.com/ios-filled/50/ffffff/open-book--v1.png" width="32"/><span style="font-size: 18px; color: #e0e7ff;">教资数据实验室</span></div>
+<h1>教师资格证笔试全国通过率查询系统</h1>
+<p style="font-size: 18px; margin-top: 10px; color: #e5e5e5;">2015-2025年各省市官方数据及交叉验证推测</p>
+</div>
+<div class="search-container">
+<input id="province" placeholder="请输入省份名称（如：广东）" type="text"/>
+<button onclick="search()">查询</button>
+</div>
+<div class="result-table" id="result-box">
+<table>
+<tbody id="result-body">
+<tr class="main-info"><td colspan="3" style="text-align:center; font-size: 16px; font-weight: normal;">请输入省份并点击查询</td></tr>
+</tbody>
+</table>
+<div class="remark" id="remark"></div>
+</div>
+<div class="hot-list">
+<h3>相关热搜</h3>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">1</div><div class="hot-text">小学阶段报考通过率为何最高？</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">2</div><div class="hot-text">为什么选择分号教育通过率那么高！</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">3</div><div class="hot-text">震惊，木子老师学生都过了！</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">4</div><div class="hot-text">教资国考改革前后有什么不同？</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">5</div><div class="hot-text">分号教育押题卷疑似泄题！</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">6</div><div class="hot-text">哪些省份考试难度最低？</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">7</div><div class="hot-text">报考高峰期集中在哪几个月？</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">8</div><div class="hot-text">考前背诵顺序怎么安排最合理？</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">9</div><div class="hot-text">备考周期建议多长时间？</div></div>
+<div class="hot-item" style="display: grid; grid-template-columns: 24px 1fr; column-gap: 6px; align-items: start;"><div class="hot-index">10</div><div class="hot-text">分号教育内部讲义曝光，含金量惊人！</div></div>
+</div>
+<script>
+        const data = {
+"北京": ["10%-20%", "2016年", "北京市教育考试院统计（报考3万余人）2014年为国考试点，通过率10%。提升至20%以上。"],
+"天津": ["28.5%", "2021年", "京津冀地区均值推测（参考河北历史数据）"],
+"河北": ["24.0%", "2015年", "省考试院公告（国考改革后较省考下降40%）"],
+"山西": ["30.0%", "2021年", "中部地区均值推测（政策稳定）普遍在30%以下"],
+"内蒙古": ["35.0%", "2021年", "西部政策倾斜区均值。依据西部地区教师需求情况，推测内蒙古笔试通过率可能高于平均，约35%（机构估算，参考部分中西部省份可达（35%–40%的水平）"],
+"辽宁": ["29.0%", "2023年", "预计辽宁笔试通过率为30%左右。阅卷标准严格。但官方未发布明确数据，推测与全国平均相近"],
+"吉林": ["32.0%", "2024年", "根据吉林省教资报考基数值，推测通过率为全国均值。"],
+"黑龙江": ["31.0%", "2021年", "东北地区均值推测（竞争强度适中）"],
+"上海": ["24%～27%", "2017年", "（优质考生集中）在省考期间通过率是70%左右，而改为“国考”后通过率均不足30%。"],
+"江苏": ["27.0%", "2015年", "江苏省教育厅试点报告：15年下半年江苏省首批统考笔试通过率仅27.53%"],
+"浙江": ["<30%", "2015年", "省考改革后通过率下降（原省考70%）。统考通过率预计25%-30%之间。"],
+"安徽": ["24.0%", "2018年", "合肥市教育局（含历史通过者）18年前后合肥市报名18606人，约4548人笔试合格，通过率约24%。"],
+"福建": ["30.0%", "2021年", "东部沿海最高值推测（报考热度适中）"],
+"江西": ["30.0%", "2025年", "江西教师资格网（单科通过率）"],
+"山东": ["26.0%", "2021年", "据临沂市教育局数据，2016年下半年临沂市教师资格证笔试通过率仅26.67%（全市报名39385人，仅10240人通过"],
+"河南": ["17.4%", "2015年", "郑州市教育局（实考25888人，合格4527人）2015年下半年数据。"],
+"湖北": ["39.0%", "2018年", "2018年前后湖北省通过率一度偏高。以武汉市为例：约3.8万人报考，约1.5万人通过笔试，粗算通过率达39% ，显著高于全国平均。这可能因师范生增多、备考充分所致。"],
+"湖南": ["<30%", "2021年", "湖南省通过率可能略低于全国平均。据教育媒体反馈，湖南地区教资笔试通过率“并不乐观”，或略低于其他省份平均水平"],
+"广东": ["26.0%", "2016年", "广州市考试院（39386人报考，7729人通过）茂名市教育局（1869人报考，424人通过）广东省自2016下半年实施统考，历年笔试通过率约在22%–30%之间 。官方数据表明随着报考人数增多，通过率逐步提高，但仍大幅低于省考时期。"],
+"广西": ["30.0%", "2021年", "广西教资笔试通过率常年约为30%"],
+"海南": ["30%-40%", "-", "未公布官方数据（2012年试点后通过率未显著下降）"],
+"重庆": ["33.0%", "2021年", "西部地区均值推测，参考四川"],
+"四川": ["33.0%", "2025年", "真题难度高、报考人数多，略高于全国水平"],
+"贵州": ["30%-40%", "2021年", "行业推测贵州教资笔试通过率在30%–40%之间 。西部地区教师需求较大，通过率相对偏高（如2019年有推测面试通过率高于（60%），笔试通过率据此估计在全国平均线略上"],
+"云南": ["35.0%", "2025年", "云南省作为西部省份，教师缺口较大，笔试通过率可能高于平均，约35%（机构估算，参考贵州等相近省份的趋势）。"],
+"西藏": ["40.0%", "2021年", "西藏自治区考生基数小且师资奇缺，预计笔试通过率相对较高（约40%）（机构估算）。当地对合格教师需求迫切，可能放宽合格比例以鼓励更多考生通过。"],
+"陕西": ["27.5%", "2015年", "全省试点均值（参考6省首批国考）虽然西安等地报考人数多，但总体水平通过率在全国平均水平。"],
+"甘肃": ["35.0%", "2022年", "甘肃教师岗位相对缺乏，考官评分宽松。22年面试通过率达到70%，笔试通过率相对较高。"],
+"青海": ["40.0%", "2023年", "青海属于西部欠发达地区，考生规模小。预计笔试通过率较高，约40%"],
+"宁夏": ["40.0%", "2021年", "宁夏考生人数不多且地处西北，推测教师资格笔试通过率偏高，约40%。（依据周边省区趋势）"],
+"新疆": ["35.0%", "2021年", "新疆地域广阔，教育发展不平衡，估计笔试通过率35%（机构估算）。偏远地区教师需求较大，或使通过率高于全国平均"]
+};
+        function search() {
+            
+const input = document.getElementById('province').value.trim();
+const province = Object.keys(data).find(key => key.startsWith(input)) || input;
+
+            const body = document.getElementById('result-body');
+            const remark = document.getElementById('remark');
+            body.innerHTML = '';
+            remark.innerHTML = '';
+            
+if (data[province]) {
+    const rate = parseFloat(data[province][0]);
+    let level = '';
+    let trend = '';
+    if (rate >= 35) { level = '较高'; trend = '该省通过率为较高水平，显著高于全国平均'; }
+    else if (rate >= 30) { level = '中等'; trend = '该省通过率为中等水平，略高于全国平均'; }
+    else if (rate >= 25) { level = '偏低'; trend = '该省通过率为偏低水平，建议重点备考'; }
+    else { level = '较低'; trend = '该省通过率较低，报考需更充分准备'; }
+
+    const row = `<tr class="main-info">
+                    <td>省份：${province}</td>
+                    <td data-type="rate">${rate.toFixed(1)}%</td>
+                    <td data-type="year">${data[province][1]}</td>
+                    <td data-type="level">${level}</td>
+                 </tr>`;
+    body.innerHTML = row;
+    remark.innerHTML = `<div class="trend-tip">${trend}</div><div title="${data[province][2]}">${data[province][2]}</div>`;
+}
+else {
+                body.innerHTML = '<tr class="main-info"><td colspan="3" style="text-align:center;">未查询到相关数据</td></tr>';
+            }
+        }
+    
+document.getElementById('result-box').addEventListener('click', () => {
+  if (data[province]) {
+    const map = {
+      "广东": "https://eea.gd.gov.cn/",
+      "陕西": "https://jyt.shaanxi.gov.cn/"
+    };
+    if (map[province]) {
+      window.open(map[province], '_blank');
+    }
+  }
+});
+
+
+
+document.getElementById('result-box').addEventListener('click', () => {
+    const modal = document.getElementById('trend-modal');
+    if (modal) modal.style.display = 'block';
+});
+
+const hotItems = document.querySelectorAll('.hot-item');
+const tooltip = document.getElementById('hot-tooltip');
+const explanations = {
+  1: '小学阶段题目简单、人数多，通过率高。',
+  2: '分号教育教学有方法，通过率自然高。',
+  3: '木子老师教学经验丰富，学生表现优异。',
+  4: '改革前后笔试范围有变化。',
+  5: '段子而已，别当真。',
+  6: '难度与试题命中率相关。',
+  7: '报名高峰期集中在考前2-3个月。',
+  8: '背诵顺序可根据真题权重调整。',
+  9: '建议3-6个月备考周期。',
+  10: '讲义内容紧贴考试方向，命中率高。'
+};
+hotItems.forEach((item, i) => {
+  item.addEventListener('click', e => {
+    tooltip.innerText = explanations[i + 1] || "暂无解释";
+    tooltip.style.left = e.pageX + 'px';
+    tooltip.style.top = e.pageY + 'px';
+    tooltip.style.display = 'block';
+  });
+});
+document.addEventListener('click', e => {
+  if (!e.target.classList.contains('hot-item')) {
+    tooltip.style.display = 'none';
+  }
+});
+</script>
+<div style="text-align: center; font-size: 16px; color: #888; margin: 60px 0 30px; font-style: italic;">比通过率更重要的，是开始准备的你。</div>
+
+<div class="tooltip" id="hot-tooltip"></div></body>
+</html>
