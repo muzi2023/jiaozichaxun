@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师资格证笔试全国通过率查询系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            color: #333;
+            min-height: 100vh;
+            padding-bottom: 40px;
+            transition: background 0.8s ease;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1f3c88, #6a7bd1);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-container i {
+            font-size: 36px;
+            color: #ffeb3b;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .search-container {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            margin: -30px auto 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 20px;
+        }
+        
+        #province {
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        #province:focus {
+            border-color: #5c6bc0;
+            box-shadow: 0 0 0 4px rgba(92, 107, 192, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(to right, #5c6bc0, #3f51b5);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(92, 107, 192, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(92, 107, 192, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .result-container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-title {
+            font-size: 24px;
+            color: #2d4ec8;
+            font-weight: 700;
+        }
+        
+        .result-box {
+            margin: 20px 0;
+        }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+        
+        .result-table th {
+            padding: 15px;
+            font-size: 18px;
+            text-align: center;
+            background: #f5f7ff;
+            color: #5c6bc0;
+            font-weight: 600;
+        }
+        
+        .result-table td {
+            padding: 20px;
+            font-size: 18px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .result-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .result-table td[data-type="rate"] {
+            font-size: 36px;
+            font-weight: 800;
+            color: #2d4ec8;
+        }
+        
+        .level-low {
+            background-color: #ffebee;
+            color: #c62828;
+            border-radius: 12px;
+        }
+        
+        .level-medium-low {
+            background-color: #fff8e1;
+            color: #f57f17;
+            border-radius: 12px;
+        }
+        
+        .level-medium {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border-radius: 12px;
+        }
+        
+        .level-high {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 12px;
+        }
+        
+        .trend-tip {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 25px 0;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f5f7ff;
+        }
+        
+        .remark {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border-left: 4px solid #5c6bc0;
+        }
+        
+        .hot-list {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .hot-list h3 {
+            font-size: 22px;
+            color: #2d4ec8;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .hot-list h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #5c6bc0, #3f51b5);
+            border-radius: 2px;
+        }
+        
+        .hot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .hot-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 18px;
+            border-radius: 16px;
+            background: #f9f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+        
+        .hot-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            background: white;
+            border-color: #e0e0e0;
+        }
+        
+        .hot-index {
+            font-size: 20px;
+            font-weight: 800;
+            color: #5c6bc0;
+            min-width: 36px;
+            text-align: center;
+            margin-right: 15px;
+            background: #edf0ff;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 10px;
+        }
+        
+        .hot-text {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.6;
+        }
+        
+        .inspiration {
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+            margin: 60px 0 30px;
+            font-style: italic;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .color-legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-box, button {
+                width: 100%;
+            }
+            
+            .result-table td, .result-table th {
+                padding: 15px 10px;
+                font-size: 16px;
+            }
+            
+            .result-table td[data-type="rate"] {
+                font-size: 28px;
+            }
+            
+            .hot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <i class="fas fa-graduation-cap"></i>
+            <span style="font-size: 24px; font-weight: 600;">教资数据实验室</span>
+        </div>
+        <h1>教师资格证笔试全国通过率查询系统</h1>
+        <p>2015-2025年各省市官方数据及交叉验证推测 · 精准分析助您备考</p>
+    </div>
+    
+    <div class="container">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input id="province" placeholder="请输入省份名称（如：广东）" type="text">
+            </div>
+            <button onclick="search()">
+                <i class="fas fa-paper-plane"></i> 查询通过率
+            </button>
+        </div>
+        
+        <div class="result-container" id="result-container">
+            <div class="result-header">
+                <div class="result-title">通过率查询结果</div>
+                <div class="color-legend">
+                    <div class="legend-item" style="background: #e8f5e9;">
+                        <div class="legend-color" style="background: #2e7d32;"></div>
+                        <span>较高 ≥35%</span>
+                    </div>
+                    <div class="legend-item" style="background: #e3f2fd;">
+                        <div class="legend-color" style="background: #1565c0;"></div>
+                        <span>中等 30-34%</span>
+                    </div>
+                    <div class="legend-item" style="background: #fff8e1;">
+                        <div class="legend-color" style="background: #f57f17;"></div>
+                        <span>偏低 25-29%</span>
+                    </div>
+                    <div class="legend-item" style="background: #ffebee;">
+                        <div class="legend-color" style="background: #c62828;"></div>
+                        <span>较低 ≤24%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-box">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>省份</th>
+                            <th>通过率</th>
+                            <th>数据年份</th>
+                            <th>通过等级</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result-body">
+                        <tr>
+                            <td id="result-province">-</td>
+                            <td id="result-rate" data-type="rate">-</td>
+                            <td id="result-year">-</td>
+                            <td id="result-level">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div id="trend-tip" class="trend-tip">
+                    查询结果将显示在这里
+                </div>
+                
+                <div id="remark" class="remark">
+                    数据说明将显示在这里
+                </div>
+            </div>
+        </div>
+        
+        <div class="hot-list">
+            <h3><i class="fas fa-fire"></i> 教资考试相关热搜</h3>
+            <div class="hot-grid">
+                <div class="hot-item">
+                    <div class="hot-index">1</div>
+                    <div class="hot-text">小学阶段报考通过率为何最高？</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">2</div>
+                    <div class="hot-text">为什么选择分号教育通过率那么高！</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">3</div>
+                    <div class="hot-text">震惊，木子老师学生都过了！</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">4</div>
+                    <div class="hot-text">教资国考改革前后有什么不同？</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">5</div>
+                    <div class="hot-text">分号教育押题卷疑似泄题！</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">6</div>
+                    <div class="hot-text">哪些省份考试难度最低？</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">7</div>
+                    <div class="hot-text">报考高峰期集中在哪几个月？</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">8</div>
+                    <div class="hot-text">考前背诵顺序怎么安排最合理？</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">9</div>
+                    <div class="hot-text">备考周期建议多长时间？</div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-index">10</div>
+                    <div class="hot-text">分号教育内部讲义曝光，含金量惊人！</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="inspiration">
+            <i class="fas fa-quote-left" style="color: #5c6bc0; margin-right: 10px;"></i>
+            比通过率更重要的，是开始准备的你
+            <i class="fas fa-quote-right" style="color: #5c6bc0; margin-left: 10px;"></i>
+        </div>
+    </div>
+
+    <script>
+        // 省份数据
+        const data = {
+            "北京": {rate: "10%-20%", year: "2016年", desc: "北京市教育考试院统计（报考3万余人）2014年为国考试点，通过率10%。提升至20%以上。"},
+            "天津": {rate: "28.5%", year: "2021年", desc: "京津冀地区均值推测（参考河北历史数据）"},
+            "河北": {rate: "24.0%", year: "2015年", desc: "省考试院公告（国考改革后较省考下降40%）"},
+            "山西": {rate: "30.0%", year: "2021年", desc: "中部地区均值推测（政策稳定）普遍在30%以下"},
+            "内蒙古": {rate: "35.0%", year: "2021年", desc: "西部政策倾斜区均值。依据西部地区教师需求情况，推测内蒙古笔试通过率可能高于平均，约35%（机构估算，参考部分中西部省份可达（35%–40%的水平）"},
+            "辽宁": {rate: "29.0%", year: "2023年", desc: "预计辽宁笔试通过率为30%左右。阅卷标准严格。但官方未发布明确数据，推测与全国平均相近"},
+            "吉林": {rate: "32.0%", year: "2024年", desc: "根据吉林省教资报考基数值，推测通过率为全国均值。"},
+            "黑龙江": {rate: "31.0%", year: "2021年", desc: "东北地区均值推测（竞争强度适中）"},
+            "上海": {rate: "24%～27%", year: "2017年", desc: "（优质考生集中）在省考期间通过率是70%左右，而改为“国考”后通过率均不足30%。"},
+            "江苏": {rate: "27.0%", year: "2015年", desc: "江苏省教育厅试点报告：15年下半年江苏省首批统考笔试通过率仅27.53%"},
+            "浙江": {rate: "<30%", year: "2015年", desc: "省考改革后通过率下降（原省考70%）。统考通过率预计25%-30%之间。"},
+            "安徽": {rate: "24.0%", year: "2018年", desc: "合肥市教育局（含历史通过者）18年前后合肥市报名18606人，约4548人笔试合格，通过率约24%。"},
+            "福建": {rate: "30.0%", year: "2021年", desc: "东部沿海最高值推测（报考热度适中）"},
+            "江西": {rate: "30.0%", year: "2025年", desc: "江西教师资格网（单科通过率）"},
+            "山东": {rate: "26.0%", year: "2021年", desc: "据临沂市教育局数据，2016年下半年临沂市教师资格证笔试通过率仅26.67%（全市报名39385人，仅10240人通过"},
+            "河南": {rate: "17.4%", year: "2015年", desc: "郑州市教育局（实考25888人，合格4527人）2015年下半年数据。"},
+            "湖北": {rate: "39.0%", year: "2018年", desc: "2018年前后湖北省通过率一度偏高。以武汉市为例：约3.8万人报考，约1.5万人通过笔试，粗算通过率达39% ，显著高于全国平均。这可能因师范生增多、备考充分所致。"},
+            "湖南": {rate: "<30%", year: "2021年", desc: "湖南省通过率可能略低于全国平均。据教育媒体反馈，湖南地区教资笔试通过率“并不乐观”，或略低于其他省份平均水平"},
+            "广东": {rate: "26.0%", year: "2016年", desc: "广州市考试院（39386人报考，7729人通过）茂名市教育局（1869人报考，424人通过）广东省自2016下半年实施统考，历年笔试通过率约在22%–30%之间 。官方数据表明随着报考人数增多，通过率逐步提高，但仍大幅低于省考时期。"},
+            "广西": {rate: "30.0%", year: "2021年", desc: "广西教资笔试通过率常年约为30%"},
+            "海南": {rate: "30%-40%", year: "-", desc: "未公布官方数据（2012年试点后通过率未显著下降）"},
+            "重庆": {rate: "33.0%", year: "2021年", desc: "西部地区均值推测，参考四川"},
+            "四川": {rate: "33.0%", year: "2025年", desc: "真题难度高、报考人数多，略高于全国水平"},
+            "贵州": {rate: "30%-40%", year: "2021年", desc: "行业推测贵州教资笔试通过率在30%–40%之间 。西部地区教师需求较大，通过率相对偏高（如2019年有推测面试通过率高于（60%），笔试通过率据此估计在全国平均线略上"},
+            "云南": {rate: "35.0%", year: "2025年", desc: "云南省作为西部省份，教师缺口较大，笔试通过率可能高于平均，约35%（机构估算，参考贵州等相近省份的趋势）。"},
+            "西藏": {rate: "40.0%", year: "2021年", desc: "西藏自治区考生基数小且师资奇缺，预计笔试通过率相对较高（约40%）（机构估算）。当地对合格教师需求迫切，可能放宽合格比例以鼓励更多考生通过。"},
+            "陕西": {rate: "27.5%", year: "2015年", desc: "全省试点均值（参考6省首批国考）虽然西安等地报考人数多，但总体水平通过率在全国平均水平。"},
+            "甘肃": {rate: "35.0%", year: "2022年", desc: "甘肃教师岗位相对缺乏，考官评分宽松。22年面试通过率达到70%，笔试通过率相对较高。"},
+            "青海": {rate: "40.0%", year: "2023年", desc: "青海属于西部欠发达地区，考生规模小。预计笔试通过率较高，约40%"},
+            "宁夏": {rate: "40.0%", year: "2021年", desc: "宁夏考生人数不多且地处西北，推测教师资格笔试通过率偏高，约40%。（依据周边省区趋势）"},
+            "新疆": {rate: "35.0%", year: "2021年", desc: "新疆地域广阔，教育发展不平衡，估计笔试通过率35%（机构估算）。偏远地区教师需求较大，或使通过率高于全国平均"}
+        };
+
+        function search() {
+            const input = document.getElementById('province').value.trim();
+            const province = Object.keys(data).find(key => key.startsWith(input)) || input;
+            const resultContainer = document.getElementById('result-container');
+            
+            if (data[province]) {
+                const rate = data[province].rate;
+                let level = '';
+                let trend = '';
+                let levelClass = '';
+                
+                // 处理特殊字符并转换为数值用于分类
+                let numericValue = 0;
+                if (rate.includes('～') || rate.includes('-')) {
+                    const range = rate.split(/[～-]/).map(s => parseFloat(s.replace('%', '')));
+                    numericValue = (range[0] + range[1]) / 2;
+                } else if (rate.includes('<')) {
+                    numericValue = parseFloat(rate.replace(/[<%]/g, '')) - 5;
+                } else {
+                    numericValue = parseFloat(rate.replace('%', ''));
+                }
+                
+                // 确定等级和颜色分类
+                if (numericValue >= 35) { 
+                    level = '较高'; 
+                    trend = '该省通过率为较高水平，显著高于全国平均'; 
+                    levelClass = 'level-high';
+                }
+                else if (numericValue >= 30) { 
+                    level = '中等'; 
+                    trend = '该省通过率为中等水平，略高于全国平均'; 
+                    levelClass = 'level-medium';
+                }
+                else if (numericValue >= 25) { 
+                    level = '偏低'; 
+                    trend = '该省通过率为偏低水平，建议重点备考'; 
+                    levelClass = 'level-medium-low';
+                }
+                else { 
+                    level = '较低'; 
+                    trend = '该省通过率较低，报考需更充分准备'; 
+                    levelClass = 'level-low';
+                }
+
+                // 更新结果
+                document.getElementById('result-province').textContent = province;
+                document.getElementById('result-rate').textContent = rate;
+                document.getElementById('result-year').textContent = data[province].year;
+                document.getElementById('result-level').textContent = level;
+                document.getElementById('result-level').className = levelClass;
+                
+                document.getElementById('trend-tip').innerHTML = `<i class="fas fa-chart-line"></i> ${trend}`;
+                document.getElementById('remark').innerHTML = `<strong><i class="fas fa-info-circle"></i> 数据说明：</strong> ${data[province].desc}`;
+                
+                // 显示结果容器
+                resultContainer.style.display = 'block';
+                
+                // 添加动画效果
+                resultContainer.animate([
+                    { opacity: 0, transform: 'translateY(20px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ], {
+                    duration: 600,
+                    easing: 'ease-out'
+                });
+            }
+            else {
+                document.getElementById('result-province').textContent = input || "未知省份";
+                document.getElementById('result-rate').textContent = "-";
+                document.getElementById('result-year').textContent = "-";
+                document.getElementById('result-level').textContent = "-";
+                document.getElementById('result-level').className = "";
+                
+                document.getElementById('trend-tip').innerHTML = `<i class="fas fa-exclamation-triangle"></i> 未找到相关数据`;
+                document.getElementById('remark').innerHTML = `请检查省份名称是否正确，支持的省份包括：北京、上海、广东、湖南等全国各省市自治区`;
+                
+                // 显示结果容器
+                resultContainer.style.display = 'block';
+            }
+        }
+
+        // 添加输入框回车键支持
+        document.getElementById('province').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                search();
+            }
+        });
+    </script>
+</body>
+</html>
