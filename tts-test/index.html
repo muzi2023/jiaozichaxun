@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>中文 TTS 手机试听</title>
+  <style>
+    :root{color-scheme:dark;--bg:#08111f;--card:#101b2d;--line:#26364d;--text:#f8fafc;--muted:#9fb0c7;--accent:#60a5fa;--good:#34d399;--bad:#fb7185}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#07101d,#0b1424 45%,#07101d);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+    main{max-width:720px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+    h1{font-size:24px;margin:8px 0 6px} .sub{color:var(--muted);font-size:14px;line-height:1.55;margin-bottom:18px}
+    .card{background:rgba(16,27,45,.94);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.25)}
+    .status{padding:12px 14px;border-radius:12px;background:#0b1525;border:1px solid var(--line);font-size:14px;line-height:1.5;margin-bottom:14px}.status.good{border-color:rgba(52,211,153,.55);color:#a7f3d0}.status.bad{border-color:rgba(251,113,133,.55);color:#fecdd3}
+    label{display:block;font-size:13px;color:#cbd5e1;margin:0 0 7px;font-weight:650} textarea,select,input{width:100%;border:1px solid var(--line);background:#091322;color:var(--text);border-radius:12px;padding:12px;font-size:16px;outline:none} textarea{min-height:126px;resize:vertical;line-height:1.6} textarea:focus,select:focus,input:focus{border-color:var(--accent)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.rangeRow{display:flex;align-items:center;gap:10px}.rangeRow input{padding:0}.rangeValue{min-width:44px;text-align:right;color:#bfdbfe;font-variant-numeric:tabular-nums}
+    button{width:100%;border:0;border-radius:13px;padding:14px 16px;font-size:16px;font-weight:750;margin-top:12px;background:linear-gradient(135deg,#3b82f6,#7c3aed);color:white;box-shadow:0 8px 24px rgba(59,130,246,.22)} button.secondary{background:#16243a;border:1px solid #31435f;box-shadow:none} button:disabled{opacity:.48}
+    audio{width:100%;margin-top:13px}.tiny{font-size:12px;color:var(--muted);line-height:1.55;margin-top:10px}.metric{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:8px 0;border-bottom:1px solid rgba(38,54,77,.55)}.metric:last-child{border-bottom:0}.metric span:first-child{color:var(--muted)}
+    .loader{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-1px;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:520px){.grid{grid-template-columns:1fr} main{padding-left:12px;padding-right:12px}.card{border-radius:16px;padding:14px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>中文 TTS 手机试听</h1>
+  <div class="sub">Kokoro v1.1 中文模型 · 浏览器本地推理。第一次需要下载模型，后续浏览器通常会缓存。先听声音，别急着造宇宙飞船。</div>
+
+  <section class="card">
+    <div id="status" class="status">尚未加载模型。建议 Wi‑Fi 下测试。</div>
+    <button id="loadBtn">加载中文模型</button>
+    <div class="tiny" id="deviceNote">会自动检测 WebGPU；支持时优先用 q4f16 + WebGPU，否则回退 q8 + WASM。</div>
+  </section>
+
+  <section class="card">
+    <label for="text">测试文本</label>
+    <textarea id="text">请你谈一谈，作为一名教师，应该如何处理课堂中的突发情况？</textarea>
+    <div class="grid">
+      <div>
+        <label for="voice">声音</label>
+        <select id="voice">
+          <optgroup label="中文女声">
+            <option value="zf_001">女声 zf_001</option><option value="zf_002">女声 zf_002</option><option value="zf_003">女声 zf_003</option><option value="zf_004">女声 zf_004</option><option value="zf_005">女声 zf_005</option><option value="zf_006">女声 zf_006</option>
+          </optgroup>
+          <optgroup label="中文男声">
+            <option value="zm_009">男声 zm_009</option><option value="zm_010">男声 zm_010</option><option value="zm_011">男声 zm_011</option><option value="zm_012">男声 zm_012</option><option value="zm_013">男声 zm_013</option><option value="zm_014">男声 zm_014</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <label for="speed">语速</label>
+        <div class="rangeRow"><input id="speed" type="range" min="0.7" max="1.3" step="0.05" value="1"><span id="speedVal" class="rangeValue">1.00×</span></div>
+      </div>
+    </div>
+    <button id="genBtn" disabled>生成并播放</button>
+    <audio id="player" controls playsinline></audio>
+  </section>
+
+  <section class="card">
+    <div class="metric"><span>运行方式</span><strong id="mDevice">未加载</strong></div>
+    <div class="metric"><span>模型精度</span><strong id="mDtype">未加载</strong></div>
+    <div class="metric"><span>本次生成</span><strong id="mTime">—</strong></div>
+    <div class="metric"><span>采样率</span><strong>24 kHz</strong></div>
+    <div class="tiny">提示：如果 ChatGPT 内置浏览器不支持 WebGPU，可以点右上角在 Safari 中打开。声音好不好听才是这次测试的核心，界面丑不丑先别审判它。</div>
+  </section>
+</main>
+
+<script type="module">
+  import { KokoroTTS } from 'https://cdn.jsdelivr.net/npm/@uzen/kokoro-js@1.2.4/+esm';
+
+  const MODEL_ID = 'onnx-community/Kokoro-82M-v1.1-zh-ONNX';
+  const VOICE_PATH = 'https://huggingface.co/onnx-community/Kokoro-82M-v1.1-zh-ONNX/resolve/main/voices';
+  let tts = null;
+  let device = null;
+  let dtype = null;
+  let currentUrl = null;
+
+  const $ = (id) => document.getElementById(id);
+  const setStatus = (html, kind='') => { $('status').className = 'status ' + kind; $('status').innerHTML = html; };
+
+  $('speed').addEventListener('input', () => $('speedVal').textContent = Number($('speed').value).toFixed(2) + '×');
+
+  async function detectMode(){
+    try {
+      if (navigator.gpu && await navigator.gpu.requestAdapter()) return {device:'webgpu', dtype:'q4f16'};
+    } catch(e) {}
+    return {device:'wasm', dtype:'q8'};
+  }
+
+  async function loadModel(){
+    $('loadBtn').disabled = true; $('genBtn').disabled = true;
+    setStatus('<span class="loader"></span>正在下载并初始化中文模型。首次加载文件比较大，保持这个页面打开。');
+    const mode = await detectMode(); device = mode.device; dtype = mode.dtype;
+    $('mDevice').textContent = device.toUpperCase(); $('mDtype').textContent = dtype;
+    try {
+      tts = await KokoroTTS.from_pretrained(MODEL_ID, { device, dtype, voicePath: VOICE_PATH });
+      setStatus('模型已就绪。现在可以切换声音直接试听。','good');
+      $('loadBtn').textContent = '模型已加载'; $('genBtn').disabled = false;
+    } catch(firstError){
+      console.error(firstError);
+      if(device !== 'wasm'){
+        setStatus('<span class="loader"></span>WebGPU 初始化失败，正在自动切换兼容模式…');
+        try{
+          device='wasm'; dtype='q8'; $('mDevice').textContent='WASM'; $('mDtype').textContent=dtype;
+          tts = await KokoroTTS.from_pretrained(MODEL_ID, { device, dtype, voicePath: VOICE_PATH });
+          setStatus('兼容模式已就绪。可以开始试听。','good'); $('loadBtn').textContent='模型已加载'; $('genBtn').disabled=false; return;
+        }catch(secondError){ console.error(secondError); firstError = secondError; }
+      }
+      setStatus('模型加载失败：' + (firstError?.message || String(firstError)) + '<br><br>如果你现在是在 ChatGPT 内置浏览器，请改用 Safari 打开这个页面再试。','bad');
+      $('loadBtn').disabled=false; $('loadBtn').textContent='重新加载';
+    }
+  }
+
+  function floatToWav(samples, sampleRate=24000){
+    const buffer = new ArrayBuffer(44 + samples.length * 2); const view = new DataView(buffer);
+    const write = (o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i,s.charCodeAt(i)); };
+    write(0,'RIFF'); view.setUint32(4,36+samples.length*2,true); write(8,'WAVE'); write(12,'fmt ');
+    view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,1,true); view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate*2,true); view.setUint16(32,2,true); view.setUint16(34,16,true); write(36,'data'); view.setUint32(40,samples.length*2,true);
+    let off=44; for(let i=0;i<samples.length;i++,off+=2){ const s=Math.max(-1,Math.min(1,samples[i])); view.setInt16(off,s<0?s*0x8000:s*0x7fff,true); }
+    return new Blob([view],{type:'audio/wav'});
+  }
+
+  async function generate(){
+    if(!tts) return;
+    const text=$('text').value.trim(); if(!text){ setStatus('先输入点中文，空气目前还不能合成语音。','bad'); return; }
+    $('genBtn').disabled=true; setStatus('<span class="loader"></span>正在生成语音…'); const start=performance.now();
+    try{
+      const audio = await tts.generate(text,{voice:$('voice').value,speed:Number($('speed').value)});
+      const samples = audio.audio || audio.data || audio;
+      if(!(samples instanceof Float32Array) && !ArrayBuffer.isView(samples)) throw new Error('没有拿到有效音频数据');
+      const blob=floatToWav(samples, audio.sampling_rate || audio.sample_rate || 24000);
+      if(currentUrl) URL.revokeObjectURL(currentUrl); currentUrl=URL.createObjectURL(blob); $('player').src=currentUrl; $('player').load();
+      $('mTime').textContent=((performance.now()-start)/1000).toFixed(2)+' 秒'; setStatus('生成完成。换几个男女声连续听，别只听一个就判死刑。','good');
+      try{ await $('player').play(); }catch(e){}
+    }catch(err){ console.error(err); setStatus('生成失败：'+(err?.message||String(err)),'bad'); }
+    finally{ $('genBtn').disabled=false; }
+  }
+
+  $('loadBtn').addEventListener('click',loadModel); $('genBtn').addEventListener('click',generate);
+</script>
+</body>
+</html>
