@@ -1,0 +1,143 @@
+name: Emoji lab smoke check
+on:
+  push:
+    paths:
+      - 'emoji-lab/**'
+      - '.github/workflows/emoji-lab-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check emoji-lab/app.js
+      - name: Install isolated browser test dependencies
+        run: |
+          mkdir -p "$RUNNER_TEMP/emoji-qa/report"
+          cd "$RUNNER_TEMP/emoji-qa"
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check real assets, browser interaction and published page
+        env:
+          QA_ROOT: ${{ runner.temp }}/emoji-qa
+        run: |
+          cat > "$QA_ROOT/run.cjs" <<'JS'
+          const { chromium } = require('playwright');
+          const assert = require('node:assert/strict');
+          const fs = require('node:fs');
+          const { spawn } = require('node:child_process');
+          const path = require('node:path');
+          const report = { version:'20260922-fix2', startedAt:new Date().toISOString(), mocked:false, checks:[] };
+          const out = path.join(process.env.QA_ROOT,'report');
+          const sleep = ms => new Promise(r=>setTimeout(r,ms));
+          const server = spawn('python3',['-m','http.server','8765','--bind','127.0.0.1','--directory',path.join(process.env.GITHUB_WORKSPACE,'emoji-lab')],{stdio:'ignore'});
+          let browser;
+          async function animatedWebp(url) {
+            const response = await fetch(url,{signal:AbortSignal.timeout(25000)});
+            assert.equal(response.status,200,url);
+            const bytes=Buffer.from(await response.arrayBuffer());
+            assert.equal(bytes.subarray(0,4).toString(),'RIFF');
+            assert.equal(bytes.subarray(8,12).toString(),'WEBP');
+            assert(bytes.includes(Buffer.from('ANIM')),'WebP must contain animation data');
+            return {url,status:response.status,bytes:bytes.length,animated:true};
+          }
+          (async()=>{
+            try {
+              await sleep(1500);
+              browser=await chromium.launch({headless:true});
+              const page=await browser.newPage({viewport:{width:1440,height:1000}});
+              const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+              await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+              await page.waitForFunction(()=>window.__emojiLab && window.__emojiLab.catalogCount>=77);
+              report.checks.push({name:'startup',passed:true});
+              await page.waitForFunction(()=>Object.values(window.__emojiLab.sourceStates).every(x=>!x.includes('连接中')&&!x.includes('等待')),{},{timeout:35000});
+              report.catalogCount=await page.locator('#count').innerText();
+              report.catalogs=await page.evaluate(()=>window.__emojiLab.sourceStates);
+              await page.waitForFunction(()=>{const img=document.querySelector('[data-send="noto-1f389"] img');return img && img.naturalWidth>0 && !img.hidden;},{},{timeout:25000});
+              await page.locator('[data-send="noto-1f389"]').click();
+              assert.equal(await page.locator('#chat .msg').count(),2);
+              report.checks.push({name:'real-webp-displayed-and-sent-to-chat',passed:true});
+              await page.locator('[data-fav="noto-1f389"]').click();
+              assert.equal(await page.locator('#favCount').innerText(),'1');
+              const download=page.waitForEvent('download');await page.locator('#export').click();
+              await (await download).saveAs(path.join(out,'selection.json'));
+              report.checks.push({name:'favorite-and-export',passed:true});
+              await page.locator('[data-info="noto-1f389"]').click();
+              await page.locator('#db .btn').click();
+              await page.waitForFunction(()=>document.querySelectorAll('#db .preview svg path').length>0,{},{timeout:35000});
+              const f1=await page.evaluate(()=>window.lottie.getRegisteredAnimations()[0].currentFrame);
+              await sleep(350);
+              const f2=await page.evaluate(()=>window.lottie.getRegisteredAnimations()[0].currentFrame);
+              assert.notEqual(f1,f2,'Lottie timeline should advance');
+              report.checks.push({name:'real-lottie-render-and-frame-advance',passed:true,frames:[f1,f2]});
+              await page.locator('#dc').click();
+              await page.locator('[data-tab="class"]').click();
+              assert.equal(await page.locator('#result').innerText(),'29 个条目');
+              await page.locator('#search').fill('老师慢点');
+              assert.equal(await page.locator('#grid .card').count(),1);
+              await page.locator('#search').fill('');
+              await page.locator('[data-tab="fx"]').click();
+              assert.equal(await page.locator('#grid .card').count(),12);
+              await page.locator('[data-send="fx-0"]').click();
+              assert.equal(await page.locator('.fx .particle').count(),40);
+              await page.locator('#stop').click();
+              assert.equal(await page.locator('.fx').count(),0);
+              report.checks.push({name:'classroom-search-and-fullscreen-effects',passed:true});
+              await page.locator('[data-tab="featured"]').click();
+              await page.screenshot({path:path.join(out,'desktop.png'),fullPage:true});
+              await page.setViewportSize({width:390,height:844});
+              assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+              await page.locator('#jumpChat').click();
+              await page.screenshot({path:path.join(out,'mobile.png'),fullPage:true});
+              assert.deepEqual(errors,[]);
+              report.pageErrors=errors;
+              report.checks.push({name:'390px-mobile-layout',passed:true});
+              report.realAssets=[];
+              for (const url of ['https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.webp','https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.webp','https://media.githubusercontent.com/media/ilyhalight/telegram-emoji-effects/master/webp/U+1F389/0.webp']) {
+                try {report.realAssets.push(await animatedWebp(url));} catch(e) {report.realAssets.push({url,error:String(e)});}
+              }
+              assert(report.realAssets.some(x=>x.animated));
+              report.published=false;
+              const publicUrl='https://muzi2023.github.io/jiaozichaxun/emoji-lab/?v=20260922-fix2';
+              for(let i=0;i<8;i++){
+                try{
+                  const r=await fetch(publicUrl+'&check='+Date.now(),{signal:AbortSignal.timeout(15000)});
+                  if(r.ok && (await r.text()).includes('20260922-fix2')){report.published=true;break;}
+                }catch(_){}
+                await sleep(10000);
+              }
+              if(report.published){
+                await page.goto(publicUrl,{waitUntil:'domcontentloaded'});
+                await page.waitForFunction(()=>window.__emojiLab && window.__emojiLab.version==='20260922-fix2',{},{timeout:20000});
+                await page.waitForFunction(()=>{const i=document.querySelector('[data-send="noto-1f389"] img');return i && i.naturalWidth>0 && !i.hidden;},{},{timeout:25000});
+                await page.locator('[data-send="noto-1f389"]').click();
+                assert.equal(await page.locator('#chat .msg').count(),2);
+                report.publishedBrowserVerified=true;
+                await page.screenshot({path:path.join(out,'published-mobile.png'),fullPage:true});
+              }
+              report.checks.push({name:'published-page-browser',passed:!!report.publishedBrowserVerified});
+              assert(report.publishedBrowserVerified,'Published Pages version is not ready');
+              report.passed=true;
+            } catch(e) {report.passed=false;report.failure=String(e);process.exitCode=1;}
+            finally {
+              if(browser)await browser.close();server.kill();
+              fs.writeFileSync(path.join(out,'result.json'),JSON.stringify(report,null,2));
+              console.log('EMOJI_LAB_RESULT\n'+JSON.stringify(report,null,2));
+            }
+          })();
+          JS
+          node "$QA_ROOT/run.cjs"
+      - name: Save test screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emoji-lab-browser-report
+          path: ${{ runner.temp }}/emoji-qa/report
+          retention-days: 7
