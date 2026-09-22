@@ -2,9 +2,7 @@ name: Curated emoji assets
 on:
   push:
     branches: [main]
-    paths:
-      - 'emoji-special/prepare.py'
-      - '.github/workflows/emoji-special-assets.yml'
+    paths: ['emoji-special/prepare.py', '.github/workflows/emoji-special-assets.yml']
 permissions:
   contents: write
 concurrency:
@@ -19,19 +17,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install image conversion dependency
-        run: pip install Pillow==11.3.0
-      - name: Pin source commit identifiers and prepare assets
+      - run: pip install Pillow==11.3.0
+      - name: Prepare selected animations
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('emoji-special/prepare.py')
           s=p.read_text()
           s=s.replace("return d['sha'],", "return json.loads(get('https://api.github.com/repos/'+repo+'/commits/'+ref))['sha'],")
+          s=s.replace("('Face with peeking eye','偷偷看一眼','到底选什么')", "('Shushing face','先别剧透','答案先别公布')")
           p.write_text(s)
           PY
           python emoji-special/prepare.py
-      - name: Commit only the separate curated pack outputs
+      - name: Commit only curated pack outputs
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
