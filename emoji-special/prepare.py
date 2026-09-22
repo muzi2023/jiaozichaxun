@@ -23,10 +23,10 @@ def get(url):
 def tree(repo, ref):
     d=json.loads(get('https://api.github.com/repos/'+repo+'/git/trees/'+ref+'?recursive=1'))
     assert not d.get('truncated'), 'incomplete tree'
-    return d['sha'], [x['path'] for x in d['tree'] if x['type']=='blob']
+    return json.loads(get('https://api.github.com/repos/'+repo+'/commits/'+ref))['sha'], [x['path'] for x in d['tree'] if x['type']=='blob']
 ms='microsoft/fluentui-emoji-animated'; par='jmhobbs/cultofthepartyparrot.com'
 msref,mstree=tree(ms,'main'); pref,ptree=tree(par,'main')
-msdefs=[('Exploding head','脑子炸了','这个知识点有点猛'),('Melting face','原地融化','听着听着人化了'),('Face with spiral eyes','脑子转圈','信息量有点大'),('Zany face','放飞自我','今天主打一个搞怪'),('Upside-down face','倒着思考','换个角度想想'),('Ghost','我又出现了','潜水同学冒个泡'),('Alien monster','小怪兽上线','今天也要打怪升级'),('See-no-evil monkey','不敢看答案','先别揭晓答案'),('Face with peeking eye','偷偷看一眼','到底选什么'),('Loudly crying face','被难哭了','这题真的有点难'),('Rolling on the floor laughing','笑到打滚','这个解释有画面了'),('Face screaming in fear','震惊全班','原来还能这么答')]
+msdefs=[('Exploding head','脑子炸了','这个知识点有点猛'),('Melting face','原地融化','听着听着人化了'),('Face with spiral eyes','脑子转圈','信息量有点大'),('Zany face','放飞自我','今天主打一个搞怪'),('Upside-down face','倒着思考','换个角度想想'),('Ghost','我又出现了','潜水同学冒个泡'),('Alien monster','小怪兽上线','今天也要打怪升级'),('See-no-evil monkey','不敢看答案','先别揭晓答案'),('Shushing face','先别剧透','答案先别公布'),('Loudly crying face','被难哭了','这题真的有点难'),('Rolling on the floor laughing','笑到打滚','这个解释有画面了'),('Face screaming in fear','震惊全班','原来还能这么答')]
 pardefs=[('hd/moonwalkingparrot.gif','太空步','这题我先溜了'),('hd/dealwithitparrot.gif','墨镜一戴','答案我心里有数'),('hd/confusedparrot.gif','歪头迷惑','你再说一遍'),('hd/coffeeparrot.gif','喝口咖啡','让我缓一缓'),('hd/popcornparrot.gif','吃瓜围观','前排认真围观'),('hd/sleepingparrot.gif','困到变形','老师我还撑得住'),('hd/scienceparrot.gif','科学怪鸟','开始认真研究'),('hd/congaparrot.gif','排队摇摆','全班一起动起来')]
 jobs=[]
 for i,(folder,name,caption) in enumerate(msdefs):
