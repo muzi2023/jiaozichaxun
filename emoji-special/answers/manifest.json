@@ -1,0 +1,86 @@
+[
+  {
+    "id": "answer-comic-A",
+    "frames": 20,
+    "bytes": 151358,
+    "sha256": "ee7abeb30f613c943f5a896901d998274da7a868ee7093d42157a18ad396f70b",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-comic-B",
+    "frames": 20,
+    "bytes": 160242,
+    "sha256": "fde8b8999fac8078e317316c5fe5e2b25e562a5ba0b3c16ec1dda780bef80194",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-comic-C",
+    "frames": 20,
+    "bytes": 142644,
+    "sha256": "3a36dc822002e9aa04fdf6dacbe75b1e3a759e7b735985778577f91f0d9e78e7",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-comic-D",
+    "frames": 20,
+    "bytes": 138292,
+    "sha256": "e7edaefab0340673b905996da9c8d479cb484cd143de74b55a2509ffa62ce499",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-jelly-A",
+    "frames": 20,
+    "bytes": 96780,
+    "sha256": "a6240ef7b36a3eb1195ef075951716c54fad536bdb88f59e42c4e863ad9c32a4",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-jelly-B",
+    "frames": 20,
+    "bytes": 103112,
+    "sha256": "8a5e630a6e2b8aaf0959e45d7cc4292eebf6016df4fc5076c1a5c8b0fa77514d",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-jelly-C",
+    "frames": 20,
+    "bytes": 90668,
+    "sha256": "70f444bb05cb77558e0bfefce4064785fb28f44829d878b0e57d7e78292fea78",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-jelly-D",
+    "frames": 20,
+    "bytes": 87158,
+    "sha256": "5d4b46388081fea1e772b65a545706d84a33c95ae98969228a0c145a513d0d9d",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-sign-A",
+    "frames": 20,
+    "bytes": 129862,
+    "sha256": "a955212302288d5c137e1c306815f205153f2f21b08cda426e6cfd1bfab6da9b",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-sign-B",
+    "frames": 20,
+    "bytes": 135202,
+    "sha256": "a8f410000451714a37ee6e28634b8c7c8c7425650ab27330dab212022f64ac89",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-sign-C",
+    "frames": 20,
+    "bytes": 125892,
+    "sha256": "1b8aa70212af24c6299f5a53c9a34626bf7c8ba96ae0f1ec804344896063be46",
+    "license": "MIT - Fenhao original vector animation"
+  },
+  {
+    "id": "answer-sign-D",
+    "frames": 20,
+    "bytes": 123312,
+    "sha256": "07ae00e82c876018b821ba2ae8c9d897b7a10ce891b55e81372f01945b1078de",
+    "license": "MIT - Fenhao original vector animation"
+  }
+]
