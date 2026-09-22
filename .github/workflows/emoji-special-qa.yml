@@ -1,0 +1,100 @@
+name: Curated emoji browser verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'emoji-special/index.html'
+      - 'emoji-special/style.css'
+      - 'emoji-special/app.js'
+      - 'emoji-special/qa.cjs'
+      - '.github/workflows/emoji-special-qa.yml'
+permissions:
+  contents: write
+concurrency:
+  group: emoji-special-qa
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirm original library remains unchanged
+        run: |
+          test "$(git rev-parse HEAD:emoji-lab)" = d2aa5656fa982622e33b173b815b0f571914db41
+          test "$(git rev-parse HEAD:index.html)" = 17b6246e5baf1e0341a84a5c81c50d5ef290a845
+          node --check emoji-special/app.js
+          node --check emoji-special/qa.cjs
+      - name: Install isolated browser tooling
+        run: |
+          mkdir -p "$RUNNER_TEMP/special-qa"
+          cd "$RUNNER_TEMP/special-qa"
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          pip install Pillow==11.3.0
+      - name: Test page and export original answer frames
+        env:
+          NODE_PATH: ${{ runner.temp }}/special-qa/node_modules
+          QA_REPORT: ${{ runner.temp }}/special-qa/report
+        run: node emoji-special/qa.cjs
+      - name: Create lightweight Animated WebP answer files
+        env:
+          QA_REPORT: ${{ runner.temp }}/special-qa/report
+        run: |
+          python - <<'PY'
+          import os, json, hashlib
+          from pathlib import Path
+          from PIL import Image
+          root=Path('emoji-special/answers')
+          frames=Path(os.environ['QA_REPORT'])/'frames'
+          report=[]
+          for folder in sorted(frames.iterdir()):
+              images=[Image.open(p).convert('RGBA') for p in sorted(folder.glob('*.png'))]
+              assert len(images)==20
+              out=root/(folder.name+'.webp')
+              images[0].save(out,format='WEBP',save_all=True,append_images=images[1:],duration=100,loop=0,quality=90,method=4)
+              check=Image.open(out)
+              assert check.n_frames>1
+              report.append({'id':folder.name,'frames':check.n_frames,'bytes':out.stat().st_size,'sha256':hashlib.sha256(out.read_bytes()).hexdigest(),'license':'MIT - Fenhao original vector animation'})
+          assert len(report)==12
+          (root/'manifest.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Save only new answer assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add emoji-special/answers
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Export twelve verified ABCD answer stickers as Lottie and Animated WebP'
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then exit 0; fi
+          done
+          exit 1
+      - name: Test published page and same-origin animations
+        env:
+          NODE_PATH: ${{ runner.temp }}/special-qa/node_modules
+          QA_REPORT: ${{ runner.temp }}/special-qa/report
+          PUBLIC_CHECK: '1'
+        run: node emoji-special/qa.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: emoji-special-browser-report
+          path: |
+            ${{ runner.temp }}/special-qa/report/*.json
+            ${{ runner.temp }}/special-qa/report/*.png
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: emoji-special-complete
+          path: emoji-special/
+          retention-days: 7
