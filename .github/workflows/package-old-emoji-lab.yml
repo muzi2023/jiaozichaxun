@@ -1,0 +1,39 @@
+name: Package old emoji lab
+on:
+  push:
+    paths:
+      - '.github/workflows/package-old-emoji-lab.yml'
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build package
+        run: |
+          mkdir -p dist/fenhao-emoji-lab-old-version
+          cp -R emoji-lab/* dist/fenhao-emoji-lab-old-version/
+          cat > dist/fenhao-emoji-lab-old-version/README.txt <<'TXT'
+          分号 · 动态表情实验室（旧版素材库）
+
+          线上地址：
+          https://muzi2023.github.io/jiaozichaxun/emoji-lab/
+
+          说明：
+          1. 这是旧版 emoji-lab 当前页面源码包，和 emoji-special 新版完全独立。
+          2. 包内包含 index.html 和 app.js。
+          3. 旧版大量动画资源通过 Noto / Telegram / Telemoji 在线地址按需加载，
+             所以这个源码包本身不是“2348 个动画全部离线打包”。
+          4. 本地预览时建议在本目录启动：
+             python3 -m http.server 8080
+             然后打开 http://localhost:8080/
+          5. 如果需要真正离线全素材包，应另行批量下载所选 WebP / Lottie 文件。
+          TXT
+          cd dist
+          zip -r fenhao-emoji-lab-old-version.zip fenhao-emoji-lab-old-version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fenhao-emoji-lab-old-version
+          path: dist/fenhao-emoji-lab-old-version.zip
+          retention-days: 7
